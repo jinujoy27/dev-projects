@@ -1,0 +1,139 @@
+@if (product(); as selectedProduct) {
+  <section class="product-detail">
+    <div class="product-detail__gallery">
+      <div
+        class="product-stage product-detail__stage {{ selectedProduct.silhouette }}"
+        [style.--product-base]="selectedProduct.palette[0]"
+        [style.--product-accent]="selectedProduct.palette[1]"
+        [style.--product-shadow]="selectedProduct.palette[2]"
+      >
+        <span class="product-stage__collection">{{ selectedProduct.collection }}</span>
+        <div class="product-stage__garment"></div>
+      </div>
+
+      <div class="product-detail__support-grid">
+        <article class="panel-surface">
+          <p class="eyebrow">Fabric</p>
+          <strong>{{ selectedProduct.fabric }}</strong>
+        </article>
+        <article class="panel-surface">
+          <p class="eyebrow">Fit</p>
+          <strong>{{ selectedProduct.fit }}</strong>
+        </article>
+      </div>
+    </div>
+
+    <div class="product-detail__content">
+      <a class="button-ghost" routerLink="/">Back to the edit</a>
+      <div class="stacked-copy">
+        <p class="eyebrow">{{ selectedProduct.category }} / {{ selectedProduct.collection }}</p>
+        <h1>{{ selectedProduct.name }}</h1>
+        <p class="section-copy">{{ selectedProduct.description }}</p>
+      </div>
+
+      <div class="product-detail__price">
+        <strong>{{ selectedProduct.price | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        @if (selectedProduct.originalPrice) {
+          <span>{{ selectedProduct.originalPrice | currency: currencyCode : 'symbol' : '1.0-0' }}</span>
+        }
+      </div>
+
+      <div class="product-detail__selectors">
+        <div>
+          <label>Colour</label>
+          <div class="selector-row">
+            @for (color of selectedProduct.colors; track color.name) {
+              <button
+                type="button"
+                class="selector selector--swatch"
+                [class.is-selected]="selectedColorName() === color.name"
+                (click)="selectColor(color.name)"
+              >
+                <span class="swatch" [style.--swatch]="color.swatch"></span>
+                {{ color.name }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label>Size</label>
+          <div class="selector-row">
+            @for (size of selectedProduct.sizes; track size) {
+              <button type="button" class="selector" [class.is-selected]="selectedSize() === size" (click)="selectSize(size)">
+                {{ size }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label>Quantity</label>
+          <div class="quantity-stepper">
+            <button type="button" (click)="changeQuantity(-1)">-</button>
+            <span>{{ quantity() }}</span>
+            <button type="button" (click)="changeQuantity(1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-detail__actions">
+        <button type="button" class="button-primary" (click)="addToBag(selectedProduct)">Add to bag</button>
+        <a class="button-secondary" routerLink="/checkout">Checkout now</a>
+      </div>
+
+      @if (addMessage()) {
+        <p class="status-note is-success">{{ addMessage() }}</p>
+      }
+
+      <article class="product-detail__story panel-surface">
+        <p class="eyebrow">Why it works</p>
+        <p class="section-copy">{{ selectedProduct.story }}</p>
+        <ul>
+          @for (highlight of selectedProduct.highlights; track highlight) {
+            <li>{{ highlight }}</li>
+          }
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="related-section">
+    <div class="related-section__intro">
+      <p class="eyebrow">Pair it with</p>
+      <h2 class="section-heading">Build out the full look.</h2>
+    </div>
+    <div class="related-grid">
+      @for (product of relatedProducts(); track product.id) {
+        <article class="related-card panel-surface">
+          <div
+            class="product-stage related-card__stage {{ product.silhouette }}"
+            [style.--product-base]="product.palette[0]"
+            [style.--product-accent]="product.palette[1]"
+            [style.--product-shadow]="product.palette[2]"
+          >
+            <span class="product-stage__collection">{{ product.collection }}</span>
+            <div class="product-stage__garment"></div>
+          </div>
+          <div class="related-card__copy">
+            <div>
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.description }}</p>
+            </div>
+            <div class="related-card__footer">
+              <strong>{{ product.price | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+              <a class="button-ghost" [routerLink]="['/product', product.slug]">View piece</a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+} @else {
+  <section class="empty-state panel-surface">
+    <p class="eyebrow">Product unavailable</p>
+    <h1 class="section-heading">This piece has left the edit.</h1>
+    <p class="section-copy">Return to the storefront to explore the rest of the collection.</p>
+    <a class="button-primary" routerLink="/">Back to home</a>
+  </section>
+}

@@ -1,0 +1,39 @@
+<div class="site-shell">
+  <div class="announcement-bar">Complimentary boutique pickup in Sydney and easy 30-day returns.</div>
+
+  <header class="site-header">
+    <a class="brand-lockup" routerLink="/">
+      <span class="brand-lockup__eyebrow">Sydney / Ready-to-wear</span>
+      <span class="brand-lockup__title">{{ storeName }}</span>
+    </a>
+
+    <nav class="site-nav">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/" fragment="catalogue">Shop</a>
+      <a routerLink="/" fragment="journal">Journal</a>
+      <a routerLink="/checkout" routerLinkActive="is-active">Checkout</a>
+    </nav>
+
+    <a class="site-cart" routerLink="/cart" routerLinkActive="is-active">
+      Bag
+      <span>{{ cartService.itemCount() }}</span>
+    </a>
+  </header>
+
+  <main class="site-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <p class="eyebrow">Atelier South</p>
+      <h2>Premium clothing with a checkout flow that stays inside the Angular app.</h2>
+    </div>
+    <div class="site-footer__meta">
+      <p>{{ supportEmail }}</p>
+      <span>Mon-Fri / 9 AM to 6 PM AEST</span>
+      <span>Complimentary concierge sizing support on every order.</span>
+      <button (click)="testPrintGrid()">Test Grid Printer</button>
+    </div>
+  </footer>
+</div>

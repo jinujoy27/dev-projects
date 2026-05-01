@@ -1,0 +1,145 @@
+:host {
+  display: block;
+}
+
+.cart-page {
+  display: grid;
+  gap: 2rem;
+}
+
+.cart-page__layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 0.7fr);
+  align-items: start;
+}
+
+.cart-page__items,
+.cart-page__summary,
+.cart-page__cta,
+.cart-page__recommendations {
+  display: grid;
+  gap: 1rem;
+}
+
+.cart-item {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.cart-item__visual,
+.cart-item__visual .product-stage {
+  display: block;
+  min-height: 15rem;
+  border-radius: 1.5rem;
+}
+
+.cart-item__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.cart-item__header,
+.cart-item__actions,
+.recommendation-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cart-item__header p,
+.cart-item__header h2,
+.recommendation-card__copy h3,
+.recommendation-card__copy p {
+  margin: 0;
+}
+
+.cart-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: rgba(71, 57, 50, 0.7);
+}
+
+.promo-box {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(49, 39, 35, 0.08);
+  border-bottom: 1px solid rgba(49, 39, 35, 0.08);
+}
+
+.promo-box label {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(63, 50, 45, 0.7);
+}
+
+.promo-box__row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.promo-box input {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(50, 40, 36, 0.14);
+  background: rgba(255, 251, 246, 0.96);
+}
+
+.recommendation-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.recommendation-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.recommendation-card__stage {
+  min-height: 15rem;
+  border-radius: 1.45rem;
+}
+
+.recommendation-card__copy {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.recommendation-card__copy p {
+  color: rgba(71, 57, 50, 0.72);
+}
+
+.empty-state {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .cart-page__layout,
+  .recommendation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .cart-item {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item__header,
+  .cart-item__actions,
+  .promo-box__row,
+  .recommendation-card__footer {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+}

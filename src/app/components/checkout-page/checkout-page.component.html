@@ -1,0 +1,321 @@
+@if (cartService.items().length) {
+  <section class="checkout-page">
+    <div class="checkout-page__intro">
+      <div>
+        <p class="eyebrow">Checkout</p>
+        <h1 class="section-heading">A complete purchase flow, built into the storefront.</h1>
+      </div>
+      <p class="section-copy">
+        Move from shipping to payment to confirmation without leaving the Angular app. Your bag, discounts, and totals all
+        stay synced as you go.
+      </p>
+    </div>
+
+    <form class="checkout-page__layout" [formGroup]="checkoutForm">
+      <div class="checkout-page__flow">
+        <nav class="checkout-steps" aria-label="Checkout steps">
+          @for (step of steps; track step.number) {
+            <button
+              type="button"
+              class="checkout-step"
+              [class.is-active]="currentStep() === step.number"
+              [class.is-complete]="currentStep() > step.number"
+              (click)="goToStep(step.number)"
+            >
+              <span>{{ step.number }}</span>
+              <div>
+                <strong>{{ step.label }}</strong>
+                <small>{{ step.caption }}</small>
+              </div>
+            </button>
+          }
+        </nav>
+
+        @if (currentStep() === 1) {
+          <section class="panel-surface checkout-card">
+            <div class="checkout-card__header">
+              <div>
+                <p class="eyebrow">Step 1</p>
+                <h2>Contact and shipping</h2>
+              </div>
+              <span>Required</span>
+            </div>
+
+            <div class="checkout-fields checkout-fields--two">
+              <div class="field field--wide">
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
+                @if (showError('email')) {
+                  <small class="field-error">Enter a valid email address.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="first-name">First name</label>
+                <input id="first-name" type="text" formControlName="firstName" />
+                @if (showError('firstName')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="last-name">Last name</label>
+                <input id="last-name" type="text" formControlName="lastName" />
+                @if (showError('lastName')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input id="phone" type="tel" formControlName="phone" placeholder="+61 4xx xxx xxx" />
+                @if (showError('phone')) {
+                  <small class="field-error">Enter a reachable number.</small>
+                }
+              </div>
+
+              <div class="field field--wide">
+                <label for="address">Street address</label>
+                <input id="address" type="text" formControlName="address" />
+                @if (showError('address')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="apartment">Apartment or suite</label>
+                <input id="apartment" type="text" formControlName="apartment" placeholder="Optional" />
+              </div>
+
+              <div class="field">
+                <label for="city">City</label>
+                <input id="city" type="text" formControlName="city" />
+                @if (showError('city')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="state">State</label>
+                <input id="state" type="text" formControlName="state" />
+                @if (showError('state')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="postcode">Postcode</label>
+                <input id="postcode" type="text" formControlName="postcode" />
+                @if (showError('postcode')) {
+                  <small class="field-error">Enter a valid postcode.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="country">Country</label>
+                <input id="country" type="text" formControlName="country" />
+                @if (showError('country')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+            </div>
+
+            <div class="checkout-card__actions">
+              <a class="button-ghost" routerLink="/cart">Back to bag</a>
+              <button type="button" class="button-primary" (click)="advanceToPayment()">Continue to payment</button>
+            </div>
+          </section>
+        }
+
+        @if (currentStep() === 2) {
+          <section class="panel-surface checkout-card">
+            <div class="checkout-card__header">
+              <div>
+                <p class="eyebrow">Step 2</p>
+                <h2>Delivery and payment</h2>
+              </div>
+              <span>Secure preview</span>
+            </div>
+
+            <div class="delivery-grid">
+              @for (option of deliveryOptions; track option.id) {
+                <label class="delivery-option" [class.is-selected]="selectedDelivery().id === option.id">
+                  <input type="radio" formControlName="delivery" [value]="option.id" />
+                  <div>
+                    <strong>{{ option.label }}</strong>
+                    <span>{{ option.description }}</span>
+                  </div>
+                  <em>{{ option.price | currency: currencyCode : 'symbol' : '1.0-0' }}</em>
+                </label>
+              }
+            </div>
+
+            <div class="checkout-fields checkout-fields--two">
+              <div class="field field--wide">
+                <label for="cardholder">Cardholder name</label>
+                <input id="cardholder" type="text" formControlName="cardholder" />
+                @if (showError('cardholder')) {
+                  <small class="field-error">Required.</small>
+                }
+              </div>
+
+              <div class="field field--wide">
+                <label for="card-number">Card number</label>
+                <input
+                  id="card-number"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="19"
+                  formControlName="cardNumber"
+                  placeholder="4242 4242 4242 4242"
+                  (input)="formatCardNumber($event)"
+                />
+                @if (showError('cardNumber')) {
+                  <small class="field-error">Enter a 16-digit card number.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="expiry">Expiry</label>
+                <input
+                  id="expiry"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="5"
+                  formControlName="expiry"
+                  placeholder="MM/YY"
+                  (input)="formatExpiry($event)"
+                />
+                @if (showError('expiry')) {
+                  <small class="field-error">Use MM/YY.</small>
+                }
+              </div>
+
+              <div class="field">
+                <label for="cvc">CVC</label>
+                <input
+                  id="cvc"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="4"
+                  formControlName="cvc"
+                  placeholder="123"
+                  (input)="formatCvc($event)"
+                />
+                @if (showError('cvc')) {
+                  <small class="field-error">Enter 3 or 4 digits.</small>
+                }
+              </div>
+
+              <div class="field field--wide">
+                <label for="notes">Delivery notes</label>
+                <textarea
+                  id="notes"
+                  rows="3"
+                  formControlName="notes"
+                  placeholder="Intercom, concierge, or gift note details."
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="checkout-card__actions">
+              <button type="button" class="button-ghost" (click)="goToStep(1)">Back</button>
+              <button type="button" class="button-primary" (click)="advanceToReview()">Review order</button>
+            </div>
+          </section>
+        }
+
+        @if (currentStep() === 3) {
+          <section class="panel-surface checkout-card">
+            <div class="checkout-card__header">
+              <div>
+                <p class="eyebrow">Step 3</p>
+                <h2>Review and place order</h2>
+              </div>
+              <span>Final check</span>
+            </div>
+
+            <div class="review-grid">
+              <article class="panel-surface review-card">
+                <p class="eyebrow">Shipping to</p>
+                <strong>{{ checkoutForm.controls.firstName.value }} {{ checkoutForm.controls.lastName.value }}</strong>
+                <span>{{ checkoutForm.controls.address.value }}</span>
+                <span>
+                  {{ checkoutForm.controls.city.value }}, {{ checkoutForm.controls.state.value }}
+                  {{ checkoutForm.controls.postcode.value }}
+                </span>
+                <span>{{ checkoutForm.controls.country.value }}</span>
+                <span>{{ checkoutForm.controls.email.value }}</span>
+              </article>
+
+              <article class="panel-surface review-card">
+                <p class="eyebrow">Delivery</p>
+                <strong>{{ selectedDelivery().label }}</strong>
+                <span>{{ selectedDelivery().description }}</span>
+                <span>ETA {{ selectedDelivery().eta }}</span>
+              </article>
+
+              <article class="panel-surface review-card">
+                <p class="eyebrow">Payment</p>
+                <strong>{{ checkoutForm.controls.cardholder.value }}</strong>
+                <span>Card ending in {{ cardLastFour() }}</span>
+                <span>Notes: {{ checkoutForm.controls.notes.value || 'None' }}</span>
+              </article>
+            </div>
+
+            <div class="checkout-card__actions">
+              <button type="button" class="button-ghost" (click)="goToStep(2)">Back</button>
+              <button type="button" class="button-primary" [disabled]="isSubmitting()" (click)="placeOrder()">
+                {{ isSubmitting() ? 'Processing order...' : 'Place order' }}
+              </button>
+            </div>
+          </section>
+        }
+      </div>
+
+      <aside class="panel-surface checkout-summary">
+        <p class="eyebrow">Order summary</p>
+        <h2>{{ cartService.itemCount() }} pieces in your bag</h2>
+
+        <div class="checkout-summary__items">
+          @for (item of cartService.items(); track item.key) {
+            <article class="checkout-summary__item">
+              <div class="checkout-summary__item-copy">
+                <strong>{{ item.product.name }}</strong>
+                <span>{{ item.color.name }} / {{ item.size }} / Qty {{ item.quantity }}</span>
+              </div>
+              <strong>{{ item.lineTotal | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+            </article>
+          }
+        </div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>{{ cartService.subtotal() | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Discount</span>
+          <strong>-{{ cartService.discount() | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>{{ selectedDelivery().label }}</span>
+          <strong>{{ selectedDelivery().price | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Tax</span>
+          <strong>{{ tax() | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row is-total">
+          <span>Total</span>
+          <strong>{{ total() | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </div>
+      </aside>
+    </form>
+  </section>
+} @else {
+  <section class="empty-state panel-surface">
+    <p class="eyebrow">No items to checkout</p>
+    <h1 class="section-heading">Add something to the bag first.</h1>
+    <a class="button-primary" routerLink="/" fragment="catalogue">Return to the storefront</a>
+  </section>
+}

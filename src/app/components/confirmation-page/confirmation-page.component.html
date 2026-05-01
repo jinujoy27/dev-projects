@@ -1,0 +1,81 @@
+@if (order(); as placedOrder) {
+  <section class="confirmation-hero panel-surface">
+    <p class="eyebrow">Order confirmed</p>
+    <h1 class="section-heading">Thank you, {{ placedOrder.customer.firstName }}.</h1>
+    <p class="section-copy">
+      Your order <strong>{{ placedOrder.id }}</strong> was placed on {{ placedOrder.placedAt | date: 'fullDate' }}. A
+      confirmation has been prepared for {{ placedOrder.customer.email }}.
+    </p>
+    <div class="confirmation-hero__actions">
+      <a class="button-primary" routerLink="/">Continue shopping</a>
+      <a class="button-secondary" routerLink="/cart">Open bag</a>
+    </div>
+  </section>
+
+  <section class="confirmation-grid">
+    <article class="panel-surface confirmation-card">
+      <p class="eyebrow">Delivery</p>
+      <strong>{{ placedOrder.delivery.label }}</strong>
+      <span>{{ placedOrder.delivery.description }}</span>
+      <span>Estimated arrival: {{ placedOrder.estimatedArrival }}</span>
+      <span>
+        {{ placedOrder.customer.address }}, {{ placedOrder.customer.city }}, {{ placedOrder.customer.state }}
+        {{ placedOrder.customer.postcode }}
+      </span>
+    </article>
+
+    <article class="panel-surface confirmation-card">
+      <p class="eyebrow">Payment</p>
+      <strong>Card ending in {{ placedOrder.paymentLast4 }}</strong>
+      <span>Subtotal {{ placedOrder.subtotal | currency: currencyCode : 'symbol' : '1.0-0' }}</span>
+      <span>Discount -{{ placedOrder.discount | currency: currencyCode : 'symbol' : '1.0-0' }}</span>
+      <span>Total {{ placedOrder.total | currency: currencyCode : 'symbol' : '1.0-0' }}</span>
+    </article>
+
+    <article class="panel-surface confirmation-card">
+      <p class="eyebrow">Notes</p>
+      <strong>Delivery note</strong>
+      <span>{{ placedOrder.notes || 'No delivery note was added to this order.' }}</span>
+      <span>Contact: {{ placedOrder.customer.phone }}</span>
+    </article>
+  </section>
+
+  <section class="confirmation-items panel-surface">
+    <div>
+      <p class="eyebrow">Purchased pieces</p>
+      <h2 class="section-heading">Everything in this order</h2>
+    </div>
+
+    <div class="confirmation-items__list">
+      @for (item of placedOrder.items; track item.key) {
+        <article class="confirmation-item">
+          <div>
+            <strong>{{ item.product.name }}</strong>
+            <span>{{ item.color.name }} / {{ item.size }} / Qty {{ item.quantity }}</span>
+          </div>
+          <strong>{{ item.lineTotal | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+        </article>
+      }
+    </div>
+
+    <div class="summary-row">
+      <span>Shipping</span>
+      <strong>{{ placedOrder.delivery.price | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+    </div>
+    <div class="summary-row">
+      <span>Tax</span>
+      <strong>{{ placedOrder.tax | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+    </div>
+    <div class="summary-row is-total">
+      <span>Paid</span>
+      <strong>{{ placedOrder.total | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+    </div>
+  </section>
+} @else {
+  <section class="empty-state panel-surface">
+    <p class="eyebrow">Order unavailable</p>
+    <h1 class="section-heading">We could not find that confirmation.</h1>
+    <p class="section-copy">Return to the storefront and start a new order whenever you are ready.</p>
+    <a class="button-primary" routerLink="/">Back to home</a>
+  </section>
+}

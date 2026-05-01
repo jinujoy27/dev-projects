@@ -1,0 +1,178 @@
+<section class="home-hero">
+  <div class="home-hero__copy">
+    <p class="eyebrow">Autumn drop 02</p>
+    <h1>Clothes for city light, coastal air, and everything between.</h1>
+    <p class="section-copy">
+      {{ storeName }} is a tightly edited wardrobe built around soft tailoring, luminous dresses, and outerwear that
+      carries from early meetings to late dinners.
+    </p>
+    <div class="home-hero__actions">
+      <a class="button-primary" routerLink="/" fragment="catalogue">Shop the edit</a>
+      <a class="button-secondary" routerLink="/cart">View bag {{ cartService.itemCount() }}</a>
+    </div>
+    <div class="home-hero__service">
+      <div>
+        <span>Concierge</span>
+        <strong>{{ supportEmail }}</strong>
+      </div>
+      <div>
+        <span>Delivery</span>
+        <strong>Tracked Australia-wide in 1-5 days</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-hero__visual">
+    <div
+      class="product-stage home-hero__stage {{ heroProduct.silhouette }}"
+      [style.--product-base]="heroProduct.palette[0]"
+      [style.--product-accent]="heroProduct.palette[1]"
+      [style.--product-shadow]="heroProduct.palette[2]"
+    >
+      <span class="product-stage__collection">{{ heroProduct.collection }}</span>
+      <div class="product-stage__garment"></div>
+      <div class="home-hero__floating-note panel-surface">
+        <p>Best seller</p>
+        <strong>{{ heroProduct.name }}</strong>
+        <span>{{ heroProduct.description }}</span>
+      </div>
+    </div>
+
+    <div class="home-hero__mini-grid">
+      @for (panel of editorialPanels; track panel.title) {
+        <article class="panel-surface">
+          <p>{{ panel.title }}</p>
+          <span>{{ panel.body }}</span>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="home-intro panel-surface">
+  <div>
+    <p class="eyebrow">Wardrobe building, simplified</p>
+    <h2 class="section-heading">One palette. Several complete looks.</h2>
+  </div>
+  <p class="section-copy">
+    The collection is designed so your bag feels coordinated without looking uniform. Start with a signature piece, then
+    layer in soft knits, clean essentials, and matching tailoring.
+  </p>
+</section>
+
+<section class="catalogue-section" id="catalogue">
+  <div class="catalogue-section__intro">
+    <div>
+      <p class="eyebrow">The edit</p>
+      <h2 class="section-heading">Choose by mood, not by endless scrolling.</h2>
+    </div>
+    <p class="section-copy">
+      Filter the collection, browse the silhouettes, and quick-add your first piece when you already know the vibe.
+    </p>
+  </div>
+
+  <div class="catalogue-section__filters">
+    @for (category of categories; track category) {
+      <button type="button" class="chip" [class.is-active]="selectedCategory() === category" (click)="setCategory(category)">
+        {{ category }}
+      </button>
+    }
+  </div>
+
+  @if (feedbackMessage()) {
+    <p class="status-note is-success">{{ feedbackMessage() }}</p>
+  }
+
+  <div class="catalogue-grid">
+    @for (product of filteredProducts(); track product.id) {
+      <article class="product-card">
+        <a
+          class="product-card__visual"
+          [routerLink]="['/product', product.slug]"
+          [style.--product-base]="product.palette[0]"
+          [style.--product-accent]="product.palette[1]"
+          [style.--product-shadow]="product.palette[2]"
+        >
+          <div class="product-stage {{ product.silhouette }}">
+            <span class="product-stage__collection">{{ product.collection }}</span>
+            <div class="product-stage__garment"></div>
+          </div>
+        </a>
+        <div class="product-card__content">
+          <div class="product-card__header">
+            <div>
+              <p>{{ product.category }}</p>
+              <h3>{{ product.name }}</h3>
+            </div>
+            @if (product.badge) {
+              <span class="product-card__badge">{{ product.badge }}</span>
+            }
+          </div>
+
+          <p class="product-card__copy">{{ product.description }}</p>
+
+          <div class="product-card__meta">
+            <div class="product-card__price">
+              <strong>{{ product.price | currency: currencyCode : 'symbol' : '1.0-0' }}</strong>
+              @if (product.originalPrice) {
+                <span>{{ product.originalPrice | currency: currencyCode : 'symbol' : '1.0-0' }}</span>
+              }
+            </div>
+            <div class="product-card__swatches">
+              @for (color of product.colors; track color.name) {
+                <span class="swatch" [style.--swatch]="color.swatch" [attr.aria-label]="color.name"></span>
+              }
+            </div>
+          </div>
+
+          <div class="product-card__actions">
+            <a class="button-secondary" [routerLink]="['/product', product.slug]">Explore</a>
+            <button type="button" class="button-ghost" (click)="quickAdd(product)">Quick add</button>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="feature-story" id="journal">
+  <div
+    class="product-stage feature-story__visual {{ featureProduct.silhouette }}"
+    [style.--product-base]="featureProduct.palette[0]"
+    [style.--product-accent]="featureProduct.palette[1]"
+    [style.--product-shadow]="featureProduct.palette[2]"
+  >
+    <span class="product-stage__collection">{{ featureProduct.collection }}</span>
+    <div class="product-stage__garment"></div>
+  </div>
+
+  <div class="feature-story__copy">
+    <p class="eyebrow">Lookbook note</p>
+    <h2 class="section-heading">Dress first. Build the rest around movement.</h2>
+    <p class="section-copy">
+      {{ featureProduct.story }} Pair it with the Meridian Trench and a soft knit for a three-piece wardrobe that still
+      fits in a weekender.
+    </p>
+    <ul class="feature-story__list">
+      <li>Complimentary returns and exchanges inside 30 days.</li>
+      <li>Concierge support for sizing, hemming, and gift notes.</li>
+      <li>Signature garment bag included on orders above A$300.</li>
+    </ul>
+    <a class="button-primary" [routerLink]="['/product', featureProduct.slug]">View the feature piece</a>
+  </div>
+</section>
+
+<section class="closing-cta panel-surface">
+  <div>
+    <p class="eyebrow">Ready to checkout</p>
+    <h2 class="section-heading">Your wardrobe edit is already linked to a full checkout flow.</h2>
+  </div>
+  <p class="section-copy">
+    Add pieces from the grid, refine quantities in the bag, then move through shipping, payment, and confirmation in one
+    clean checkout.
+  </p>
+  <div class="closing-cta__actions">
+    <a class="button-primary" routerLink="/cart">Open bag</a>
+    <a class="button-secondary" routerLink="/checkout">Go straight to checkout</a>
+  </div>
+</section>
